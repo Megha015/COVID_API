@@ -11,21 +11,27 @@ import { map } from 'rxjs/operators';
   styleUrls: ['./countries.component.css'],
 })
 export class CountriesComponent implements OnInit {
-  data: GlobalDataSummary[];
+  data: GlobalDataSummary[] = [];
   countries: string[] = [];
   totalConfirmed = 0;
   totalActive = 0;
   totalDeaths = 0;
   totalRecovered = 0;
-  selectedCountryData: DateWiseData[];
-  dateWiseData;
+  selectedCountryData: DateWiseData[] = [];
+  dateWiseData: any = 0;
   loading = true;
   options: {
-    height: 500;
+    height: number;
     animation: {
-      duration: 1000;
-      easing: 'out';
+      duration: number;
+      easing: string;
     };
+  } = {
+    height: 500,
+    animation: {
+      duration: 1000,
+      easing: 'out',
+    },
   };
 
   constructor(private service: DataServiceService) {}
@@ -41,7 +47,9 @@ export class CountriesComponent implements OnInit {
         map((result) => {
           this.data = result;
           this.data.forEach((cs) => {
-            this.countries.push(cs.country);
+            if (cs.country !== undefined) {
+              this.countries.push(cs.country);
+            }
           });
         })
       )
@@ -65,10 +73,19 @@ export class CountriesComponent implements OnInit {
     console.log(country);
     this.data.forEach((cs) => {
       if (cs.country == country) {
-        this.totalActive = cs.active;
-        this.totalDeaths = cs.deaths;
-        this.totalRecovered = cs.recovered;
-        this.totalConfirmed = cs.confirmed;
+        if (cs.active !== undefined) {
+          this.totalActive = cs.active;
+        }
+        if (cs.deaths !== undefined) {
+          this.totalDeaths = cs.deaths;
+        }
+        if (cs.recovered !== undefined) {
+          this.totalRecovered = cs.recovered;
+        }
+
+        if (cs.confirmed !== undefined) {
+          this.totalConfirmed = cs.confirmed;
+        }
       }
     });
 

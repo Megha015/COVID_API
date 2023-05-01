@@ -3,7 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { GlobalDataSummary } from '../models/gloabl-data';
 import { DateWiseData } from '../models/date-wise-data';
-
+interface MainData {
+  [key: string]: GlobalDataSummary[];
+}
 @Injectable({
   providedIn: 'root',
 })
@@ -16,8 +18,7 @@ export class DataServiceService {
     return this.http.get(this.dateWiseDataUrl, { responseType: 'text' }).pipe(
       map((result) => {
         let rows = result.split('\n');
-        // console.log(rows);
-        let mainData = {};
+        let mainData: MainData = {}; // define the type of mainData explicitly
         let header = rows[0];
         let dates = header.split(/,(?=\S)/);
         dates.splice(0, 4);
@@ -26,7 +27,6 @@ export class DataServiceService {
           let cols = row.split(/,(?=\S)/);
           let con = cols[1];
           cols.splice(0, 4);
-          // console.log(con , cols);
           mainData[con] = [];
           cols.forEach((value, index) => {
             let dw: DateWiseData = {
@@ -37,8 +37,6 @@ export class DataServiceService {
             mainData[con].push(dw);
           });
         });
-
-        // console.log(mainData);
         return mainData;
       })
     );
@@ -48,7 +46,7 @@ export class DataServiceService {
     return this.http.get(this.globalDataUrl, { responseType: 'text' }).pipe(
       map((result) => {
         let data: GlobalDataSummary[] = [];
-        let raw = {};
+        let raw: { [key: string]: GlobalDataSummary } = {};
         let rows = result.split('\n');
         rows.splice(0, 1);
         // console.log(rows);
@@ -62,12 +60,12 @@ export class DataServiceService {
             recovered: +cols[9],
             active: +cols[10],
           };
-          let temp: GlobalDataSummary = raw[cs.country];
+          let temp: GlobalDataSummary = raw[cs.country] || {};
           if (temp) {
-            temp.active = cs.active + temp.active;
-            temp.confirmed = cs.confirmed + temp.confirmed;
-            temp.deaths = cs.deaths + temp.deaths;
-            temp.recovered = cs.recovered + temp.recovered;
+            temp.active = cs.active + (temp.active || 0);
+            temp.confirmed = cs.confirmed + (temp.confirmed || 0);
+            temp.deaths = cs.deaths + (temp.deaths || 0);
+            temp.recovered = cs.recovered + (temp.recovered || 0);
 
             raw[cs.country] = temp;
           } else {

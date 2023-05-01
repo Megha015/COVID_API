@@ -13,8 +13,8 @@ export class HomeComponent implements OnInit {
   totalDeaths = 0;
   totalRecovered = 0;
   loading = true;
-  globalData: GlobalDataSummary[];
-  datatable = [];
+  globalData: GlobalDataSummary[] = [];
+  datatable: (string | number)[][] = [];
   chart = {
     PieChart: 'PieChart',
     ColumnChart: 'ColumnChart',
@@ -38,10 +38,27 @@ export class HomeComponent implements OnInit {
         this.globalData = result;
         result.forEach((cs) => {
           if (!Number.isNaN(cs.confirmed)) {
-            this.totalActive += cs.active;
-            this.totalConfirmed += cs.confirmed;
-            this.totalDeaths += cs.deaths;
-            this.totalRecovered += cs.active;
+            this.globalData.forEach((cs) => {
+              if (cs.active !== undefined) {
+                this.totalActive += cs.active;
+              }
+            });
+            this.globalData.forEach((cs) => {
+              if (cs.confirmed !== undefined) {
+                this.totalConfirmed += cs.confirmed;
+              }
+            });
+
+            this.globalData.forEach((cs) => {
+              if (cs.deaths !== undefined) {
+                this.totalDeaths += cs.deaths;
+              }
+            });
+            this.globalData.forEach((cs) => {
+              if (cs.recovered !== undefined) {
+                this.totalRecovered += cs.recovered;
+              }
+            });
           }
         });
 
@@ -60,18 +77,36 @@ export class HomeComponent implements OnInit {
 
   initChart(caseType: string) {
     this.datatable = [];
-    // this.datatable.push(["Country", "Cases"])
+    this.datatable.push(['Country', 'Cases']);
 
     this.globalData.forEach((cs) => {
-      let value: number;
-      if (caseType == 'c') if (cs.confirmed > 2000) value = cs.confirmed;
+      let value: number | undefined;
 
-      if (caseType == 'a') if (cs.active > 2000) value = cs.active;
-      if (caseType == 'd') if (cs.deaths > 1000) value = cs.deaths;
+      if (
+        caseType == 'c' &&
+        cs.confirmed !== undefined &&
+        cs.confirmed > 2000
+      ) {
+        value = cs.confirmed;
+      }
 
-      if (caseType == 'r') if (cs.recovered > 2000) value = cs.recovered;
+      if (caseType == 'a' && cs.active !== undefined && cs.active > 2000) {
+        value = cs.active;
+      }
 
-      this.datatable.push([cs.country, value]);
+      if (caseType == 'd' && cs.deaths !== undefined && cs.deaths > 1000) {
+        value = cs.deaths;
+      }
+
+      if (
+        caseType == 'r' &&
+        cs.recovered !== undefined &&
+        cs.recovered > 2000
+      ) {
+        value = cs.recovered;
+      }
+
+      this.datatable.push([cs.country, value ?? 0]);
     });
     console.log(this.datatable);
   }

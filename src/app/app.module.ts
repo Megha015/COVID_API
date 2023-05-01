@@ -7,7 +7,7 @@ import { HomeComponent } from './components/home/home.component';
 import { CountriesComponent } from './components/countries/countries.component';
 import { HttpClientModule } from '@angular/common/http';
 import { DashboardCardComponent } from './components/dashboard-card/dashboard-card.component';
-import { GoogleChartsModule } from 'angular-google-charts';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -16,12 +16,7 @@ import { GoogleChartsModule } from 'angular-google-charts';
     CountriesComponent,
     DashboardCardComponent,
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    HttpClientModule,
-    GoogleChartsModule,
-  ],
+  imports: [BrowserModule, AppRoutingModule, HttpClientModule],
   providers: [],
   bootstrap: [AppComponent],
 })

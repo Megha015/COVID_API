@@ -1,5 +1,5 @@
 export interface DateWiseData {
-  country?: string;
+  country: string;
   cases?: number;
   date?: Date;
 }
